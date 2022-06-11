@@ -310,7 +310,7 @@ void LoadRom()
 
 #ifdef SNESADVANCE_SPEEDHACKS
 	if (S9xFindHacks(Memory.ROMCRC32)) {
-		//S9xSetInfoString("Found speedhacks, applying...");
+		S9xSetInfoString("Found speedhacks, applying...");
 	}
 #endif
 }
@@ -412,7 +412,7 @@ extern "C"
 #else
 	sprintf(msg, "Press SELECT+START to Show MENU");
 #endif
-	//S9xSetInfoString(msg);
+	S9xSetInfoString(msg);
 
 	LoadRom();
 	MainLoop();
