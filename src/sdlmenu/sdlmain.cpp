@@ -158,7 +158,7 @@ const char *S9xGetCfgName()
 	char ext[_MAX_EXT + 1];
 
 	_splitpath(rom_filename, drive, dir, fname, ext);
-	sprintf(filename, "%s/" CFG_DIRECTORY "/%s.cfg", GetHomeDirectory(), fname);
+	sprintf(filename, "%s/" APPHOMEDIR "/" CFG_DIRECTORY "/%s.cfg", GetHomeDirectory(), fname);
 
 	return (filename);
 }
@@ -166,8 +166,11 @@ const char *S9xGetCfgName()
 int is_home_created()
 {
 	char home[PATH_MAX + 1];
-	sprintf(home, "%s/%s", GetHomeDirectory(), CFG_DIRECTORY);
+	sprintf(home, "%s/%s", GetHomeDirectory(), APPHOMEDIR);
 	mkdir(home, 0777);
+	char cfghome[PATH_MAX + 1];
+	sprintf(cfghome, "%s/%s/%s", GetHomeDirectory(), APPHOMEDIR, CFG_DIRECTORY);
+	mkdir(cfghome, 0777);
 	if (!errno)
 		return FALSE;
 	return TRUE;
@@ -307,7 +310,7 @@ void LoadRom()
 
 #ifdef SNESADVANCE_SPEEDHACKS
 	if (S9xFindHacks(Memory.ROMCRC32)) {
-		S9xSetInfoString("Found speedhacks, applying...");
+		//S9xSetInfoString("Found speedhacks, applying...");
 	}
 #endif
 }
@@ -409,7 +412,7 @@ extern "C"
 #else
 	sprintf(msg, "Press SELECT+START to Show MENU");
 #endif
-	S9xSetInfoString(msg);
+	//S9xSetInfoString(msg);
 
 	LoadRom();
 	MainLoop();
@@ -535,7 +538,10 @@ const char *S9xGetSnapshotDirectory()
 		const char *home = GetHomeDirectory();
 		strcpy(filename, home);
 		strcat(filename, SLASH_STR);
-		strcat(filename, ".snes96_snapshots");
+		strcat(filename, APPHOMEDIR);
+		mkdir(filename, 0777);
+		strcat(filename, SLASH_STR);
+		strcat(filename, SAV_DIRECTORY);
 		mkdir(filename, 0777);
 		// chown (filename, getuid (), getgid ());
 	} else
@@ -934,7 +940,7 @@ int S9xFindHacks(int game_crc32)
 	unsigned char *snesadvance;
 	FILE *f;
 
-	sprintf(str, "%s/%s/snesadvance.dat", GetHomeDirectory(), CFG_DIRECTORY);
+	sprintf(str, "%s/%s/%s/snesadvance.dat", GetHomeDirectory(), APPHOMEDIR, CFG_DIRECTORY);
 	f = fopen(str, "rb");
 	if (!f)
 		return 0;
